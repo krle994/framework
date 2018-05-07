@@ -1,23 +1,4 @@
-import {
-h,
-setBooleanProp,
-removeBooleanProp,
-ensureNullValue,
-isEventProp,
-isObject,
-isNull,
-extractEventName,
-isCustomProp,
-setProp,
-removeProp,
-setProps,
-updateProp,
-updateProps,
-addEventListeners,
-createElement,
-changed,
-updateElement
-} from './virtualDom';
+import { VirtualDOM, h } from '../js/index';
 
 const f = (
   <ul style="list-style: none;">
@@ -49,7 +30,7 @@ const g = (
 const $root = document.getElementById('root');
 const $reload = document.getElementById('reload');
 
-updateElement($root, f);
+VirtualDOM.updateElement($root, f);
 $reload.addEventListener('click', () => {
-  updateElement($root, g, f);
+  VirtualDOM.updateElement($root, g, f);
 });
