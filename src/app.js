@@ -1,12 +1,6 @@
 import { VirtualDOM } from './virtualDOM';
 
 const f = (
-  <ul style="list-style: none;">
-    <li>item 1 </li>
-  </ul>
-);
-
-const g = (
   <div>
 
   <header>
@@ -78,6 +72,13 @@ const g = (
   </form>
   </section>
   </div>
+
+);
+
+const g = (
+    <ul style="list-style: none;">
+      <li>item 1 </li>
+    </ul>
 );
 
 const $root = document.getElementById('root');

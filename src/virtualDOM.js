@@ -1,3 +1,4 @@
+import { helpers } from './helpers';
 export let VirtualDOM = (function() {
 
   function _setBooleanProp(target, name, value) {
@@ -14,32 +15,8 @@ export let VirtualDOM = (function() {
     target[name] = false;
   }
 
-  function _ensureNullValue(value) {
-  	return _isNull(value)? ('' + value): value;
-  }
-
-  function _isEventProp(name) {
-    return /^on/.test(name);
-  }
-
-  function _isObject(value) {
-  	return typeof value === 'object';
-  }
-
-  function _isNull(value) {
-  	return value == null;
-  }
-
-  function _extractEventName(name) {
-    return name.slice(2).toLowerCase();
-  }
-
-  function _isCustomProp(name) {
-    return _isEventProp(name) || name === 'forceUpdate';
-  }
-
   function _setProp(target, name, value) {
-    if (_isCustomProp(name)) {
+    if (helpers.isCustomProp(name)) {
       return;
     } else if (name === 'className') {
       target.setAttribute('class', value);
@@ -51,7 +28,7 @@ export let VirtualDOM = (function() {
   }
 
   function _removeProp(target, name, value) {
-    if (_isCustomProp(name)) {
+    if (helpers.isCustomProp(name)) {
       return;
     } else if (name === 'className') {
       target.removeAttribute('class');
@@ -85,22 +62,14 @@ export let VirtualDOM = (function() {
 
   function _addEventListeners(target, props) {
     Object.keys(props).forEach(name => {
-      if (_isEventProp(name)) {
+      if (helpers.isEventProp(name)) {
         target.addEventListener(
-          _extractEventName(name),
+          helpers.extractEventName(name),
           props[name]
         );
       }
     });
   }
-
-  function _changed(node1, node2) {
-    return typeof node1 !== typeof node2 ||
-           !_isObject(node1) && node1 !== node2 ||
-           node1.type !== node2.type ||
-           node1.props && node1.props.forceUpdate;
-  }
-
 
   function h(type, props, ...children) {
     return {
@@ -111,7 +80,8 @@ export let VirtualDOM = (function() {
   }
 
   function createElement(node) {
-    if (!_isObject(node)) {
+    console.log(node);
+    if (!helpers.isObject(node)) {
       return document.createTextNode(node);
     }
     const el = document.createElement(node.type);
@@ -125,12 +95,12 @@ export let VirtualDOM = (function() {
 
 
   function updateElement(parent, newNode, oldNode, childNode = parent.childNodes[0]) {
-    if (_isNull(oldNode)) {
+    if (helpers.isNull(oldNode)) {
       parent.appendChild(createElement(newNode));
-    } else if (_isNull(newNode)) {
+    } else if (helpers.isNull(newNode)) {
       parent.removeChild(childNode);
       return -1; // suggests that an element has been removed
-    } else if (_changed(newNode, oldNode)) {
+    } else if (helpers.changed(newNode, oldNode)) {
       parent.replaceChild(createElement(newNode), childNode);
     } else if (newNode.type) {
       _updateProps(childNode, newNode.props, oldNode.props);
@@ -150,9 +120,9 @@ export let VirtualDOM = (function() {
 
 
   return {
-    h: h,
-    updateElement: updateElement,
-    createElement: createElement
+    h,
+    updateElement,
+    createElement
   }
 
 })();
