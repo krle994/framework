@@ -72,6 +72,13 @@ const f = (
   </form>
   </section>
   </div>
+
+);
+
+const g = (
+    <ul style="list-style: none;">
+      <li>item 1 </li>
+    </ul>
 );
 
 const g = (
