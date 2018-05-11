@@ -1,6 +1,10 @@
 import { helpers } from './helpers';
 export let VirtualDOM = (function() {
 
+  const classsMap         = {};
+  let   classCounter      = 0;
+  const HARMONY_COMPONENT = 'HARMONY_COMPONENT';
+
   function _setBooleanProp(target, name, value) {
     if (value) {
       target.setAttribute(name, value);
@@ -71,31 +75,74 @@ export let VirtualDOM = (function() {
     });
   }
 
-  function h(type, props, ...children) {
-    return {
-     type,
-      props: props || {},
-      children: [].concat.apply([], children)
-   };
+  function isStateLessComponent(element) {
+    return !isClass(element) && typeof element === 'function';
   }
 
-  function createElement(node) {
-    console.log(node);
-    if (!helpers.isObject(node)) {
-      return document.createTextNode(node);
-    }
-    const el = document.createElement(node.type);
-    _setProps(el, node.props);
-    _addEventListeners(el, node.props);
-    node.children
+  function isClass(elFunc) {
+    return typeof elFunc === 'function' &&
+           /^class\s/.test(Function.prototype.toString.call(elFunc));
+  }
+
+  function handleHtmlElement(type, props, children) {
+    const el = document.createElement(type);
+    _setProps(el, props);
+    _addEventListeners(el, props);
+    children
       .map(createElement)
       .forEach(el.appendChild.bind(el));
     return el;
   }
 
+  class Component {
+    constructor(props) {
+      this.props = props;
+    }
+
+    setState(state) {
+      this.state = Object.assign({}, this.state, state);
+    }
+  }
+
+  function reUpdate() {
+    while(parent.hasChildNodes()) {
+      parent.removeChild(parent.lastChild)
+    }
+
+    classCounter = 1;
+    updateElement()
+  }
+
+  function handleClass(clazz, props, children) {
+
+    const harmonyElement = new clazz(props);
+    harmonyElement.children = children;
+    harmonyElement.type = HARMONY_COMPONENT;
+    classMap[classCounter] = harmonyElement;
+
+    return harmonyElement;
+  }
+
+  function h(type, props, ...children) {
+    const node = {type, props, children};
+    return createElement(node);
+  }
+
+  function createElement(node) {
+    if (!helpers.isObject(node)) {
+      return document.createTextNode(node);
+    } else if (typeof node.type == 'function') {
+      return handleClass(node.type, node.props, node.children)
+    } else if (isStateLessComponent(node.type)) {
+      return node.type(props);
+    } else {
+      return handleHtmlElement(node.type, node.props, node.children);
+    }
+  }
+
 
   function updateElement(parent, newNode, oldNode, childNode = parent.childNodes[0]) {
-    if (helpers.isNull(oldNode)) {
+    if (newNode.type === HARMONY_COMPONENT || helpers.isNull(oldNode)) {
       parent.appendChild(createElement(newNode));
     } else if (helpers.isNull(newNode)) {
       parent.removeChild(childNode);
