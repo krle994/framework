@@ -80,7 +80,6 @@ export let VirtualDOM = (function() {
   }
 
   function createElement(node) {
-    console.log(node);
     if (!helpers.isObject(node)) {
       return document.createTextNode(node);
     }
