@@ -1,127 +1,180 @@
-import { helpers } from './helpers';
-export let VirtualDOM = (function() {
+export let VirtualDOM = (() => {
+  const TEXT_NODE = "TEXT NODE";
+  let rootDOMElement = null;
 
-  function _setBooleanProp(target, name, value) {
-    if (value) {
-      target.setAttribute(name, value);
-      target[name] = true;
+  function formatNode(harmon) {
+    const { type, props } = harmon;
+    const isDOMElement = typeof type === 'string';
+
+    if(isDOMElement) {
+      // Create DOM element
+      const isTextElement = type === "TEXT NODE";
+      const target = isTextElement ?
+        document.createTextNode("") :
+        document.createElement(type);
+
+      updateDOMProps(target, [], props);
+
+      // Create and append children
+      const childElements = props.children || [];
+      const childNodes = childElements.map(formatNode);
+      const childDoms = childNodes.map(childNode => childNode.target);
+      childDoms.forEach(childDom => target.appendChild(childDom));
+
+      const node = {
+        target,
+        harmon,
+        childNodes
+      };
+      return node;
+
     } else {
-      target[name] = false;
+
+      const node = {};
+      const newComponent = createNewComponent(harmon, node);
+      const childNode = newComponent.harmonize();
+      const formattedChild = formatNode(childNode);
+      const target = formattedChild.target;
+
+      Object.assign(node, { target, harmon, formattedChild, newComponent});
+      return node;
     }
   }
 
-  function _removeBooleanProp(target, name) {
-    target.removeAttribute(name);
-    target[name] = false;
+  function updateDOMProps(target, prevProps, nextProps) {
+    const isEvent = name => name.startsWith("on");
+    const isAttribute = name => !isEvent(name) && name != "children";
+    // Remove event listeners
+    Object.keys(prevProps)
+      .filter(isEvent).forEach(name => {
+        const eventType = name.toLowerCase().slice(2);
+        target.removeEventListener(eventType, prevProps[name]);
+      });
+
+    // Remove attributes
+    Object.keys(prevProps)
+      .filter(isAttribute).forEach(name => {
+        target[name] = null;
+      });
+
+    // Set attributes
+    Object.keys(nextProps)
+      .filter(isAttribute).forEach(name => {
+        target[name] = nextProps[name];
+      });
+
+    // Add event listeners
+    Object.keys(nextProps)
+      .filter(isEvent).forEach(name => {
+        const eventType = name.toLowerCase().substring(2);
+        target.addEventListener(eventType, nextProps[name]);
+      });
   }
 
-  function _setProp(target, name, value) {
-    if (helpers.isCustomProp(name)) {
-      return;
-    } else if (name === 'className') {
-      target.setAttribute('class', value);
-    } else if (typeof value === 'boolean') {
-      _setBooleanProp(target, name, value);
-    } else {
-      target.setAttribute(name, value);
+  class Component {
+    constructor(props) {
+      this.props = props;
+      this.state = this.state || {};
+    }
+
+    setState(newState) {
+      this.state = Object.assign({}, this.state, newState);
+      updateNode(this.existingNode)
     }
   }
 
-  function _removeProp(target, name, value) {
-    if (helpers.isCustomProp(name)) {
-      return;
-    } else if (name === 'className') {
-      target.removeAttribute('class');
-    } else if (typeof value === 'boolean') {
-      _removeBooleanProp(target, name);
-    } else {
-      target.removeAttribute(name);
-    }
+  function updateNode(existingNode) {
+    console.log(existingNode, 'exist');
+    const parentDom = existingNode.target.parentNode;
+    const harmon = existingNode.harmon;
+    updateDOM(parentDom, existingNode, harmon);
   }
 
-  function _setProps(target, props) {
-    Object.keys(props).forEach(name => {
-      _setProp(target, name, props[name]);
-    });
+  function createNewComponent(harmon, existingNode) {
+    const {type, props} = harmon;
+    const newComponent = new type(props);
+    newComponent.existingNode = existingNode;
+    return newComponent;
   }
 
-  function _updateProp(target, name, newVal, oldVal) {
-    if (!newVal) {
-      _removeProp(target, name, oldVal);
-    } else if (!oldVal || newVal !== oldVal) {
-      _setProp(target, name, newVal);
-    }
-  }
-
-  function _updateProps(target, newProps, oldProps = {}) {
-    const props = Object.assign({}, newProps, oldProps);
-    Object.keys(props).forEach(name => {
-      _updateProp(target, name, newProps[name], oldProps[name]);
-    });
-  }
-
-  function _addEventListeners(target, props) {
-    Object.keys(props).forEach(name => {
-      if (helpers.isEventProp(name)) {
-        target.addEventListener(
-          helpers.extractEventName(name),
-          props[name]
-        );
-      }
-    });
-  }
-
-  function h(type, props, ...children) {
+  function createElement(type, config, ...args) {
+    const props = Object.assign({}, config);
+    const hasChildren = args.length > 0;
+    const flattenChildren = hasChildren ? [].concat(...args) : [];
+    props.children = flattenChildren
+      .filter(child => child != null && child !== false)
+      .map(child => child instanceof Object ? child : createTextElement(child));
     return {
-     type,
-      props: props || {},
-      children: [].concat.apply([], children)
-   };
+      type,
+      props
+    };
   }
 
-  function createElement(node) {
-    if (!helpers.isObject(node)) {
-      return document.createTextNode(node);
+  function createTextElement(value) {
+    return createElement(TEXT_NODE, {
+      nodeValue: value
+    });
+  }
+
+  function harmonize(harmon, root) {
+    const oldHarmon = rootDOMElement;
+    const newHarmon = updateDOM(root, oldHarmon, harmon);
+    rootDOMElement = newHarmon;
+  }
+
+  function updateDOM(parentDom, node, harmon) {
+    console.log(node, 'NODE: ovde harmon');
+    if (node == null) {
+      const newNode = formatNode(harmon);
+      parentDom.appendChild(newNode.target);
+      return newNode;
+
+    } else if (harmon == null) {
+      parentDom.removeChild(node.target);
+      return null;
+
+    } else if (node.harmon.type !== harmon.type) {
+      const newNode = formatNode(harmon);
+      parentDom.replaceChild(newNode.target, node.target);
+      return newNode;
+
+    } else if (typeof harmon === 'string') {
+      updateDOMProps(node.target, node.harmon.props, harmon.props);
+      node.childNodes = updateDOMChildren(node, harmon);
+      node.harmon = harmon;
+      return node;
+
+    } else {
+      node.newComponent.props = harmon.props;
+      const componentChild = node.newComponent.harmonize();
+      const oldChildElement = node.childNode;
+      const newChildElement = updateDOM(parentDom, oldChildElement, componentChild);
+      node.target = newChildElement.target;
+      node.newChildElement = newChildElement;
+      node.harmon = harmon;
+      return node;
     }
-    const el = document.createElement(node.type);
-    _setProps(el, node.props);
-    _addEventListeners(el, node.props);
-    node.children
-      .map(createElement)
-      .forEach(el.appendChild.bind(el));
-    return el;
   }
 
-
-  function updateElement(parent, newNode, oldNode, childNode = parent.childNodes[0]) {
-    if (helpers.isNull(oldNode)) {
-      parent.appendChild(createElement(newNode));
-    } else if (helpers.isNull(newNode)) {
-      parent.removeChild(childNode);
-      return -1; // suggests that an element has been removed
-    } else if (helpers.changed(newNode, oldNode)) {
-      parent.replaceChild(createElement(newNode), childNode);
-    } else if (newNode.type) {
-      _updateProps(childNode, newNode.props, oldNode.props);
-      const max = Math.max(newNode.children.length, oldNode.children.length);
-      let adjustment = 0;
-      for (let i = 0; i < max; i++) {
-        adjustment += updateElement(
-          childNode,
-          newNode.children[i],
-          oldNode.children[i],
-          childNode.childNodes[i + adjustment]
-        );
-      }
+  function updateDOMChildren(node, harmon) {
+    const target = node.target;
+    const childNodes = node.childNodes;
+    const nextChildElements = harmon.props.children || [];
+    const newchildNodes = [];
+    const count = Math.max(childNodes.length, nextChildElements.length);
+    for (let i = 0; i < count; i++) {
+      const childNode = childNodes[i];
+      const childElement = nextChildElements[i];
+      const newChildNode = updateDOM(target, childNode, childElement);
+      newchildNodes.push(newChildNode);
     }
-    return 0; // suggest that an element has not been removed
+    return newchildNodes.filter(node => node != null);
   }
-
 
   return {
-    h,
-    updateElement,
+    Component,
+    harmonize,
     createElement
-  }
+  };
 
 })();
