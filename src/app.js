@@ -1,50 +1,48 @@
 import { Harmony } from './Harmony';
 
 
-const stories = [
-  { name: "Harmony introduction", url: "http://bit.ly/2pX7HNn" },
-  { name: "Rendering DOM elements ", url: "http://bit.ly/2qCOejH" },
-  { name: "Element creation and JSX", url: "http://bit.ly/2qGbw8S" },
-  { name: "Instances and reconciliation", url: "http://bit.ly/2q4A746" },
-  { name: "Components and state", url: "http://bit.ly/2rE16nh" }
+const quotes = [
+  { quote: "Don't cry because it's over, smile because it happened.", author: "Dr. Seuss" },
+  { quote: "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.", author: "Albert Einstein" },
+  { quote: "Be who you are and say what you feel, because those who mind don't matter, and those who matter don't mind.", author: "Bernard M. Baruch" },
+  { quote: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+  { quote: "If you tell the truth, you don't have to remember anything.", author: "Mark Twain" }
 ];
 
 class App extends Harmony.Component {
   harmonize() {
     return (
       <div>
-        <h1 className="harmony">Harmony Stories</h1>
-        <ul>
-          {this.props.stories.map(story => {
-            return <Story name={story.name} url={story.url} />;
+        <header>
+          <div className="container">
+            <h1 className="harmony">Harmony Quote Machine</h1>
+          </div>
+        </header>
+        <div className="container quote-wrapper">
+          {this.props.quotes.map(item => {
+            return <Quote quote={item.quote} author={item.author} />;
           })}
-        </ul>
+        </div>
       </div>
     );
   }
 }
 
-class Story extends Harmony.Component {
+
+class Quote extends Harmony.Component {
   constructor(props) {
     super(props);
-    this.state = { likes: Math.ceil(Math.random() * 100) };
   }
-  like() {
-    this.setState({
-      likes: this.state.likes + 1
-    });
-  }
+
   harmonize() {
-    const { name, url } = this.props;
-    const { likes } = this.state;
-    const likesElement = <span />;
+    const { quote, author } = this.props;
     return (
-      <li>
-        <button onClick={e => this.like()}>{likes}<b>❤️</b></button>
-        <a href={url}>{name}</a>
-      </li>
+      <div className="quote-item">
+        <h3 className="quote">"{quote}"</h3>
+        <p className="author">- {author}</p>
+      </div>
     );
   }
 }
 
-Harmony.harmonize(<App stories={stories} />, document.getElementById("root"));
+Harmony.harmonize(<App quotes={quotes} />, document.getElementById("root"));

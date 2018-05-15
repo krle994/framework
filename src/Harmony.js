@@ -78,11 +78,11 @@ export let Harmony = (() => {
 
       setState(newState) {
         this.state = Object.assign({}, this.state, newState);
-        updateInstance(this.existingNode);
+        updateState(this.existingNode);
       }
     }
 
-    function updateInstance(existingNode) {
+    function updateState(existingNode) {
       const parentDom = existingNode.target.parentNode;
       const harmon = existingNode.harmon;
       updateDOM(parentDom, existingNode, harmon);
@@ -168,6 +168,7 @@ export let Harmony = (() => {
     }
 
     return {
+      formatNode,
       createElement,
       harmonize,
       Component
