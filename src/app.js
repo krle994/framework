@@ -1,4 +1,4 @@
-import { VirtualDOM } from './virtualDOM';
+import { Harmony } from './Harmony';
 
 
 const stories = [
@@ -9,11 +9,11 @@ const stories = [
   { name: "Components and state", url: "http://bit.ly/2rE16nh" }
 ];
 
-class App extends VirtualDOM.Component {
+class App extends Harmony.Component {
   harmonize() {
     return (
       <div>
-        <h1>Harmony Stories</h1>
+        <h1 className="harmony">Harmony Stories</h1>
         <ul>
           {this.props.stories.map(story => {
             return <Story name={story.name} url={story.url} />;
@@ -24,7 +24,7 @@ class App extends VirtualDOM.Component {
   }
 }
 
-class Story extends VirtualDOM.Component {
+class Story extends Harmony.Component {
   constructor(props) {
     super(props);
     this.state = { likes: Math.ceil(Math.random() * 100) };
@@ -47,4 +47,4 @@ class Story extends VirtualDOM.Component {
   }
 }
 
-VirtualDOM.harmonize(<App stories={stories} />, document.getElementById("root"));
+Harmony.harmonize(<App stories={stories} />, document.getElementById("root"));
