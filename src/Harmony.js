@@ -168,7 +168,6 @@ export let Harmony = (() => {
     }
 
     return {
-      formatNode,
       createElement,
       harmonize,
       Component

@@ -34,10 +34,19 @@ class Quote extends Harmony.Component {
     super(props);
   }
 
+
+  gray(e) {
+    e.target.style.backgroundColor = '#ccc';
+  }
+  normal(e) {
+    e.target.style.backgroundColor = '#fff';
+  }
+
+
   harmonize() {
     const { quote, author } = this.props;
     return (
-      <div className="quote-item">
+      <div className="quote-item" onMouseEnter={(e) => this.gray(e)} onMouseLeave={(e) => this.normal(e)}>
         <h3 className="quote">"{quote}"</h3>
         <p className="author">- {author}</p>
       </div>
