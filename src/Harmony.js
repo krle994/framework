@@ -7,7 +7,8 @@ export let Harmony = (() => {
       const isDomElement = typeof type === "string";
 
       if (isDomElement) {
-        // formatNode target harmon
+        // for dom nodes
+        //assigns a TEXT_NODE flag as a type
         const isTextElement = type === TEXT_NODE;
         const target = isTextElement
           ? document.createTextNode("")
@@ -23,7 +24,8 @@ export let Harmony = (() => {
         const node = { target, harmon, childNodes };
         return node;
       } else {
-        // formatNode component harmon
+        // for component elements
+        // makes a node as an object and assigns new props
         const node = {};
         const newComponent = createNewComponent(harmon, node);
         const childElement = newComponent.harmonize();
@@ -35,6 +37,7 @@ export let Harmony = (() => {
       }
     }
 
+    //Loop through node props and add event listeners/attributes accordingly
     function updateDomProps(target, oldProps, newProps) {
       const isEvent = name => name.startsWith("on");
       const isAttribute = name => !isEvent(name) && name != "children";
@@ -70,10 +73,16 @@ export let Harmony = (() => {
         });
     }
 
+    // base component class
     class Component {
       constructor(props) {
         this.props = props;
         this.state = this.state || {};
+        window.onload = () => {
+          if(this.componentDidMount) {
+            this.componentDidMount();
+          }
+        }
       }
 
       setState(newState) {
@@ -86,8 +95,10 @@ export let Harmony = (() => {
       const parentDom = existingNode.target.parentNode;
       const harmon = existingNode.harmon;
       updateDOM(parentDom, existingNode, harmon);
+
     }
 
+    //instantiates new components
     function createNewComponent(harmon, existingNode) {
       const { type, props } = harmon;
       const newComponent = new type(props);
@@ -95,6 +106,9 @@ export let Harmony = (() => {
       return newComponent;
     }
 
+
+    // creates new elements and forms them into objects
+    // so that they can be passed to the harmonize function
     function createElement(type, config, ...args) {
       const props = Object.assign({}, config);
       const hasChildren = args.length > 0;
@@ -109,6 +123,7 @@ export let Harmony = (() => {
       return createElement(TEXT_NODE, { nodeValue: value });
     }
 
+    //base function for transforming elements into jsx syntax
     function harmonize(harmon, root) {
       const oldNode = rootDOMElement;
       const newNode = updateDOM(root, oldNode, harmon);
