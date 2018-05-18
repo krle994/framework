@@ -15,16 +15,34 @@ body {
   margin: auto;
 }
 
-header {
+.top-header {
   margin: 0;
   width: 100%;
   background-color: #BADA55;
   color: #f3f3f3;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+}
+
 .harmony {
   margin: 0;
   padding: 2rem 1rem;
+}
+
+ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+ul li {
+  margin: 0 1rem;
+  font-size: 1.4rem
 }
 
 .quote-wrapper {

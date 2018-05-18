@@ -26,6 +26,7 @@
     "webpack-dev-server": "^2.9.5"
   },
   "dependencies": {
+    "history": "^3.0.0",
     "prop-types": "^15.6.1"
   }
 }

@@ -13,9 +13,10 @@ class App extends Harmony.Component {
   harmonize() {
     return (
       <div>
-        <header>
-          <div className="container">
+        <header className="top-header">
+          <div className="container header-content">
             <h1 className="harmony">Harmony Quote Machine</h1>
+            <Navbar />
           </div>
         </header>
         <div className="container quote-wrapper">
@@ -24,6 +25,20 @@ class App extends Harmony.Component {
           })}
         </div>
       </div>
+    );
+  }
+}
+
+class Navbar extends Harmony.Component {
+  harmonize() {
+    return (
+      <nav>
+        <ul>
+          <li>Home</li>
+          <li>About</li>
+          <li>Contact</li>
+        </ul>
+      </nav>
     );
   }
 }
@@ -41,27 +56,21 @@ class Quote extends Harmony.Component {
   normal(e) {
     e.target.style.backgroundColor = '#fff';
   }
-
   green(e) {
     e.target.style.color = 'yellow';
   }
-
   red(e) {
     e.target.style.color = 'red';
   }
-
   normaltext(e) {
     e.target.style.color = 'black';
   }
-
   change(e) {
     e.target.parentNode.style.display = 'none';
   }
-
   componentDidMount() {
     console.log('mounted');
   }
-
   changeinput(e) {
     this.setState({name: e.target.value})
   }

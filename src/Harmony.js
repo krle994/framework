@@ -37,6 +37,14 @@ export let Harmony = (() => {
       }
     }
 
+    //instantiates new components
+    function createNewComponent(harmon, existingNode) {
+      const { type, props } = harmon;
+      const newComponent = new type(props);
+      newComponent.existingNode = existingNode;
+      return newComponent;
+    }
+
     //Loop through node props and add event listeners/attributes accordingly
     function updateDomProps(target, oldProps, newProps) {
       const isEvent = name => name.startsWith("on");
@@ -96,14 +104,6 @@ export let Harmony = (() => {
       const harmon = existingNode.harmon;
       updateDOM(parentDom, existingNode, harmon);
 
-    }
-
-    //instantiates new components
-    function createNewComponent(harmon, existingNode) {
-      const { type, props } = harmon;
-      const newComponent = new type(props);
-      newComponent.existingNode = existingNode;
-      return newComponent;
     }
 
 
