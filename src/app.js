@@ -86,7 +86,7 @@ class Quote extends Harmony.Component {
         <button id="btn" onClick={(e) => this.change(e)}>DELETE</button>
         <br/>
         <br/>
-        <input value={this.state.name} onKeyUp={e => this.changeinput(e) } />
+        <input value={this.state.name} onKeyPress={e => this.changeinput(e) } />
         <br/>
         <br/>
         {this.state.name}

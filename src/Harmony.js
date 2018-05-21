@@ -93,6 +93,10 @@ export let Harmony = (() => {
         }
       }
 
+      forceUpdate() {
+        updateDOM();
+      }
+
       setState(newState) {
         this.state = Object.assign({}, this.state, newState);
         updateState(this.existingNode);
