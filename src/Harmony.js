@@ -28,10 +28,7 @@ export let Harmony = (() => {
       // makes a node as an object and assigns new props
       const node = {};
       const newComponent = createNewComponent(harmon, node);
-      console.log(harmon, 'ovde harmon');
-      console.log(node, 'ovde node');
       const childElement = newComponent.harmonize();
-      console.log(childElement, 'ovde je');
       const childNode = formatNode(childElement);
       const target = childNode.target;
 
@@ -43,7 +40,6 @@ export let Harmony = (() => {
   //instantiates new components
   function createNewComponent(harmon, existingNode) {
     const { type, props } = harmon;
-    console.log(harmon, existingNode, 'adgastgf');
     const newComponent = new type(props);
     newComponent.existingNode = existingNode;
     return newComponent;
