@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
-  entry: {
-    app: './src/app.js'
-  },
+  entry:[
+    "babel-polyfill", "./src/app.js"
+  ],
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
@@ -14,7 +14,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader',
       query: {
-        presets: ['env'],
+        presets: ['env', 'stage-2'],
         plugins: [
           ['transform-react-jsx', {
             pragma: 'Harmony.createElement'

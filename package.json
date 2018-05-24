@@ -22,10 +22,12 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.5"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "history": "^3.0.0",
     "prop-types": "^15.6.1"
   }
