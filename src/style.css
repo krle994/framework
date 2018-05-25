@@ -47,6 +47,7 @@ header .header-content {
 
 input.form-control {
   width: 100%;
+  margin-bottom: 4rem;
   padding: .3rem 1rem;
   border: 1px solid #cfcfcf;
   border-radius: 5px;
