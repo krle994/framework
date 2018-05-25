@@ -28,7 +28,7 @@ class App extends Harmony.Component {
     const apiCall = await fetch (`https://api.github.com/users/${username}?client_id=${clientID}&client_secret=${clientSecret}`);
 
     const data = await apiCall.json();
-
+    console.log(data);
     return { data };
   }
 
@@ -52,6 +52,7 @@ class App extends Harmony.Component {
   }
 
   inputValue(e) {
+    e.preventDefault();
     this.setState({
       login: e.target.value
     });
@@ -64,12 +65,14 @@ class App extends Harmony.Component {
         <Header />
         <div className="container main-content">
           <h1>Search Github Users</h1>
-          <form >
-            <input type="text" value={this.state.login} onKeyUp={e => this.inputValue(e)} id="searchUser" ref="name" className="form-control" placeholder="Github Username..." />
-            <input type="button" onClick={() => this.showUser()} value="Get User" />
+          <form onSubmit={e => e.preventDefault()}>
+            <input type="text" value={this.state.login} onKeyUp={e => {
+              this.inputValue(e);
+              this.showUser();
+            }} className="form-control" placeholder="Github Username..." />
           </form>
           <br/>
-          <User
+          {this.state.username ? <User
           name={this.state.name}
           username={this.state.username}
           avatar={this.state.avatar}
@@ -81,6 +84,7 @@ class App extends Harmony.Component {
           location={this.state.location}
           membership={this.state.membership}
           urlLink={this.state.urlLink} />
+          : ''}
         </div>
       </div>
     );

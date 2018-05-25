@@ -1,3 +1,8 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
 body {
   font-family: sans-serif;
   margin: 0;
@@ -22,7 +27,7 @@ body {
 }
 
 header {
-  height: 5rem;
+  height: 10vh;
   display: flex;
   align-items: center;
   background: #BADA55;
@@ -35,7 +40,161 @@ header .header-content {
 }
 
 .main-content {
-  min-height: calc(100vh - 9rem);
+  min-height: 90vh;
   background-color: #fff;
   padding: 2rem;
+}
+
+input.form-control {
+  width: 100%;
+  padding: .3rem 1rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 5px;
+  line-height: 2rem;
+  font-size: 2rem;
+}
+
+input.form-control:focus {
+  outline: none;
+  border-color: #333;
+}
+
+.panel {
+  background: linear-gradient(to bottom right, #f9f9f9, #fff);
+  padding: .5rem 2rem 2rem;
+  border: 1px #333 solid;
+  border-radius: 3px;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+.panel-title {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 2rem;
+}
+
+.panel-content {
+  display: flex;
+  align-items: center;
+}
+
+.panel-avatar {
+  flex: 1;
+}
+
+.img {
+  width: 18rem;
+  height: auto;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn {
+  display: block;
+  background-color: #BADA55;
+  width: 18rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 1rem 0;
+  margin-top: 1rem;
+}
+
+.btn .link {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.panel-info {
+  flex: 2;
+}
+
+.panel-user-activity {
+  width: 4rem;
+  display: inline;
+  white-space: : nowrap;
+  background: #cfcfcf;
+  color: #fff;
+  margin: 0 1rem;
+  padding: .2rem 1rem;
+  border-radius: 4px;
+  border: 1px #444 solid;
+}
+
+.followers {
+  background-color: #17A2B8;
+}
+
+.following {
+  background-color: #DC3545;
+}
+
+.gists {
+  background-color: #28A745;
+}
+
+.repos {
+  background-color: #343A40;
+}
+
+.panel-user-info {
+  margin-top: 3rem;
+  list-style: none;
+  padding: 1rem;
+}
+
+.panel-user-info-item {
+  border: 1px solid #ccc;
+  border-bottom: none;
+  padding: 1rem 2rem;
+}
+
+.panel-user-info-item:last-child {
+  border-bottom: 1px solid #ccc;
+}
+
+@media screen and (max-width: 1024px) {
+  .container {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 1230px) {
+
+  .main-content {
+    padding: .5rem;
+  }
+
+  .panel-content {
+    display: block;
+  }
+
+  .panel-info,
+  .panel-avatar {
+    display: block;
+    width: 100%
+  }
+
+  .panel-info {
+    margin-top: 3rem;
+  }
+
+  .panel-avatar {
+    width: 290px;
+    margin: auto;
+  }
+
+  .panel-user-activity {
+    display: block;
+    width: 100%;
+    margin: 1rem auto;
+    padding: .5rem 1rem;
+  }
+
+  .panel-user-info {
+    padding: 0
+  }
+
+  .panel-user-info-item {
+    padding: 1rem .7rem;
+  }
 }
